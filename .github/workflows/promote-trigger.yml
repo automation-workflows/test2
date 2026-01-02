@@ -13,4 +13,9 @@ jobs:
       pr_number: ${{ github.event.pull_request.number }}
       repo_name: ${{ github.repository }}
       pr_author: ${{ github.event.pull_request.user.login }}
-    secrets: inherit
+    secrets:
+      GIST_PAT: ${{ secrets.GIST_PAT }}
+      DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+      DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+      DISCORD_APPRENTICE_ROLE_ID: ${{ secrets.DISCORD_APPRENTICE_ROLE_ID }}
+      DISCORD_SENTINEL_ROLE_ID: ${{ secrets.DISCORD_SENTINEL_ROLE_ID }}
