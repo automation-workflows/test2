@@ -29,4 +29,5 @@ jobs:
       pr_author: ${{ github.event.pull_request.user.login }}
       lines_changed: ${{ fromJson(needs.calculate.outputs.lines_changed) }}
       pr_labels: ${{ toJson(github.event.pull_request.labels.*.name) }}
-    secrets: inherit
+    secrets:
+      GIST_PAT: ${{ secrets.GIST_PAT }}

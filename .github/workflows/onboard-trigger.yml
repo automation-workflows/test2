@@ -36,9 +36,11 @@ jobs:
 
             **Wallet format:** Must start with \`0x\` (42 characters total)
 
-            ⚠️ **Only the PR author's comment will be accepted.**
-            ⏰ **You have 7 days to respond.**`;
+            ⚠️ **Important:**
+            - Only the PR author's comment will be accepted
+            - You must be in the Discord server to be assigned a role
             
+            ⏰ **You have 7 days to respond.**`;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
