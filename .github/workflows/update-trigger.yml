@@ -12,6 +12,16 @@ jobs:
     outputs:
       lines_changed: ${{ steps.calc.outputs.lines_changed }}
     steps:
+      - name: Verify GIST_PAT secret exists
+        env:
+          GIST_PAT: ${{ secrets.GIST_PAT }}
+        run: |
+          if [ -z "$GIST_PAT" ]; then
+            echo "❌ GIST_PAT secret is not configured"
+            exit 1
+          fi
+          echo "✓ GIST_PAT is configured (length: ${#GIST_PAT} chars)"
+      
       - name: Calculate lines changed
         id: calc
         run: |
