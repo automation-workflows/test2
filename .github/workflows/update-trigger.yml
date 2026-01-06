@@ -50,7 +50,6 @@ jobs:
 
   update:
     needs: calculate
-    environment: GIST_PAT  # Use environment secret
     uses: automation-workflows/contributor-automation/.github/workflows/reusable-update-registry.yml@main
     with:
       pr_number: ${{ github.event.pull_request.number }}
