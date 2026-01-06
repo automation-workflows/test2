@@ -12,15 +12,31 @@ jobs:
     outputs:
       lines_changed: ${{ steps.calc.outputs.lines_changed }}
     steps:
-      - name: Verify GIST_PAT secret exists
+      - name: Verify secrets configuration
         env:
           GIST_PAT: ${{ secrets.GIST_PAT }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
         run: |
+          echo "Checking required secrets..."
+          
           if [ -z "$GIST_PAT" ]; then
             echo "❌ GIST_PAT secret is not configured"
             exit 1
           fi
           echo "✓ GIST_PAT is configured (length: ${#GIST_PAT} chars)"
+          
+          if [ -z "$DISCORD_BOT_TOKEN" ]; then
+            echo "⚠️ DISCORD_BOT_TOKEN is not configured (optional for registry update)"
+          else
+            echo "✓ DISCORD_BOT_TOKEN is configured (length: ${#DISCORD_BOT_TOKEN} chars)"
+          fi
+          
+          if [ -z "$DISCORD_GUILD_ID" ]; then
+            echo "⚠️ DISCORD_GUILD_ID is not configured (optional for registry update)"
+          else
+            echo "✓ DISCORD_GUILD_ID is configured (value: $DISCORD_GUILD_ID)"
+          fi
       
       - name: Calculate lines changed
         id: calc
