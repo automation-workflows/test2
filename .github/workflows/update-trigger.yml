@@ -9,6 +9,7 @@ jobs:
     # Run on any merged PR (not just first-time contributors)
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    environment: GIST_PAT  # Use environment secret
     outputs:
       lines_changed: ${{ steps.calc.outputs.lines_changed }}
     steps:
@@ -49,6 +50,7 @@ jobs:
 
   update:
     needs: calculate
+    environment: GIST_PAT  # Use environment secret
     uses: automation-workflows/contributor-automation/.github/workflows/reusable-update-registry.yml@main
     with:
       pr_number: ${{ github.event.pull_request.number }}
