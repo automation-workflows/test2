@@ -50,6 +50,9 @@ jobs:
 
   update:
     needs: calculate
+    permissions:
+      contents: write
+      pull-requests: read
     uses: automation-workflows/contributor-automation/.github/workflows/reusable-update-registry.yml@main
     with:
       pr_number: ${{ github.event.pull_request.number || 0 }}
