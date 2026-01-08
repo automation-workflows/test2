@@ -3,11 +3,12 @@ name: Update Contributor Registry
 on:
   pull_request:
     types: [closed]
+  workflow_dispatch:
 
 jobs:
   calculate:
     # Run on any merged PR (not just first-time contributors)
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     outputs:
       lines_changed: ${{ steps.calc.outputs.lines_changed }}
@@ -42,19 +43,19 @@ jobs:
       - name: Calculate lines changed
         id: calc
         run: |
-          ADDITIONS=${{ github.event.pull_request.additions }}
-          DELETIONS=${{ github.event.pull_request.deletions }}
+          ADDITIONS=${{ github.event.pull_request.additions || 0 }}
+          DELETIONS=${{ github.event.pull_request.deletions || 0 }}
           LINES_CHANGED=$((ADDITIONS + DELETIONS))
           echo "lines_changed=$LINES_CHANGED" >> $GITHUB_OUTPUT
 
-  update:
-    needs: calculate
-    uses: automation-workflows/contributor-automation/.github/workflows/reusable-update-registry.yml@main
-    with:
-      pr_number: ${{ github.event.pull_request.number }}
-      repo_name: ${{ github.repository }}
-      pr_author: ${{ github.event.pull_request.user.login }}
-      lines_changed: ${{ fromJson(needs.calculate.outputs.lines_changed) }}
-      pr_labels: ${{ toJson(github.event.pull_request.labels.*.name) }}
-    secrets:
-      GIST_PAT: ${{ secrets.GIST_PAT }}
+  # update:
+  #   needs: calculate
+  #   uses: automation-workflows/contributor-automation/.github/workflows/reusable-update-registry.yml@main
+  #   with:
+  #     pr_number: ${{ github.event.pull_request.number }}
+  #     repo_name: ${{ github.repository }}
+  #     pr_author: ${{ github.event.pull_request.user.login }}
+  #     lines_changed: ${{ fromJson(needs.calculate.outputs.lines_changed) }}
+  #     pr_labels: ${{ toJson(github.event.pull_request.labels.*.name) }}
+  #   secrets:
+  #     GIST_PAT: ${{ secrets.GIST_PAT }}
