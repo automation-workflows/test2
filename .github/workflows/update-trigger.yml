@@ -48,14 +48,14 @@ jobs:
           LINES_CHANGED=$((ADDITIONS + DELETIONS))
           echo "lines_changed=$LINES_CHANGED" >> $GITHUB_OUTPUT
 
-  # update:
-  #   needs: calculate
-  #   uses: automation-workflows/contributor-automation/.github/workflows/reusable-update-registry.yml@main
-  #   with:
-  #     pr_number: ${{ github.event.pull_request.number }}
-  #     repo_name: ${{ github.repository }}
-  #     pr_author: ${{ github.event.pull_request.user.login }}
-  #     lines_changed: ${{ fromJson(needs.calculate.outputs.lines_changed) }}
-  #     pr_labels: ${{ toJson(github.event.pull_request.labels.*.name) }}
-  #   secrets:
-  #     GIST_PAT: ${{ secrets.GIST_PAT }}
+  update:
+    needs: calculate
+    uses: automation-workflows/contributor-automation/.github/workflows/reusable-update-registry.yml@main
+    with:
+      pr_number: ${{ github.event.pull_request.number }}
+      repo_name: ${{ github.repository }}
+      pr_author: ${{ github.event.pull_request.user.login }}
+      lines_changed: ${{ fromJson(needs.calculate.outputs.lines_changed) }}
+      pr_labels: ${{ toJson(github.event.pull_request.labels.*.name) }}
+    secrets:
+      GIST_PAT: ${{ secrets.GIST_PAT }}
