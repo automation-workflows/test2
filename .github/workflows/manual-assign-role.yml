@@ -1,0 +1,82 @@
+name: Manual Discord Role Assignment
+
+on:
+  workflow_dispatch:
+    inputs:
+      discord_user_id:
+        description: 'Discord User ID (17-19 digits)'
+        required: true
+        type: string
+      role_name:
+        description: 'Role to assign'
+        required: true
+        type: choice
+        options:
+          - Apprentice
+          - Sentinel
+          - Knights
+
+jobs:
+  assign-role:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install requests
+        run: pip install requests
+      
+      - name: Assign Discord Role
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+          DISCORD_USER_ID: ${{ inputs.discord_user_id }}
+          DISCORD_APPRENTICE_ROLE_ID: ${{ secrets.DISCORD_APPRENTICE_ROLE_ID }}
+          DISCORD_SENTINEL_ROLE_ID: ${{ secrets.DISCORD_SENTINEL_ROLE_ID }}
+          DISCORD_KNIGHTS_ROLE_ID: ${{ secrets.DISCORD_KNIGHTS_ROLE_ID }}
+          ROLE_NAME: ${{ inputs.role_name }}
+        run: |
+          python << 'EOF'
+          import os
+          import requests
+          
+          # Get inputs
+          bot_token = os.environ['DISCORD_BOT_TOKEN']
+          guild_id = os.environ['DISCORD_GUILD_ID']
+          user_id = os.environ['DISCORD_USER_ID']
+          role_name = os.environ['ROLE_NAME']
+          
+          # Determine role ID
+          if role_name == 'Apprentice':
+              role_id = os.environ['DISCORD_APPRENTICE_ROLE_ID']
+          elif role_name == 'Sentinel':
+              role_id = os.environ['DISCORD_SENTINEL_ROLE_ID']
+          elif role_name == 'Knights':
+              role_id = os.environ['DISCORD_KNIGHTS_ROLE_ID']
+          else:
+              print(f"✗ Unknown role: {role_name}")
+              exit(1)
+          
+          print(f"Assigning {role_name} role (ID: {role_id}) to user {user_id}")
+          
+          # Make Discord API request
+          url = f"https://discord.com/api/v10/guilds/{guild_id}/members/{user_id}/roles/{role_id}"
+          headers = {
+              "Authorization": f"Bot {bot_token}",
+              "Content-Type": "application/json"
+          }
+          
+          response = requests.put(url, headers=headers, timeout=10)
+          
+          # Log result
+          if response.status_code == 204:
+              print(f"✓ Successfully assigned {role_name} role")
+              exit(0)
+          else:
+              print(f"✗ Failed: {response.status_code}")
+              print(f"Response: {response.text}")
+              exit(1)
+          EOF
